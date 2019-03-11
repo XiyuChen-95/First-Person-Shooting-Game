@@ -1,0 +1,186 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PauseMenu : MonoBehaviour {
+
+    public float musicVolume;
+    public int vSync;
+
+    public Transform canvas;
+    public Button m_video, m_sound, m_controls, m_game;
+    public GameObject videoTab, soundTab, controlTab, gameTab;
+    public Dropdown m_display, m_targetDisplay, vSyncDropdown;
+    public Slider musicVolumeSlider;
+
+    public AudioSource musicSource;
+
+    void Start()
+    {
+        Button btn1 = m_video.GetComponent<Button>();
+        Button btn2 = m_sound.GetComponent<Button>();
+        Button btn3 = m_controls.GetComponent<Button>();
+        Button btn4 = m_game.GetComponent<Button>();
+
+        //Calls the TaskOnClick/TaskWithParameters method when you click the Button
+        btn1.onClick.AddListener(openVideoOptions);
+        btn2.onClick.AddListener(openSoundOptions);
+        btn3.onClick.AddListener(openControlOptions);
+        btn4.onClick.AddListener(openGameOptions);
+
+        m_display = m_display.GetComponent<Dropdown>();
+        m_display.onValueChanged.AddListener(delegate
+        {
+            displayChanged();
+        });
+
+        //Dynamically add options for each targetable display
+        List<string> options = new List<string>();
+
+        m_targetDisplay = m_targetDisplay.GetComponent<Dropdown>();
+        for (int a = 1; a <= Display.displays.Length; a++)
+        {
+            options.Add("Display " + a);
+        }
+    }
+
+    void displayChanged()
+    {
+        Debug.Log(m_display.options[m_display.value].text);
+        if (m_display.options[m_display.value].text == "Fullscreen")
+        {
+            Screen.fullScreen = true;
+        }
+        else if (m_display.options[m_display.value].text == "Windowed")
+        {
+            Screen.fullScreen = false;
+        }
+        else if (m_display.options[m_display.value].text == "Borderless Window")
+        {
+            Screen.fullScreen = false;
+
+        }
+    }
+
+    /*void OnVSyncChange()
+    {
+        QualitySettings.vSyncCount = vSync = vSyncDropdown.value;
+    }
+    */
+
+    void OnMusicVolumeChange()
+    {
+        musicSource.volume = musicVolume = musicVolumeSlider.value;
+    }
+
+    void openVideoOptions()
+    {
+        //Set color of buttons according to active tab
+        m_video.GetComponent<Image>().color = Color.white;
+        m_video.gameObject.GetComponentInChildren<Text>().color = new Color(0, 0, 0, 0.666F);
+
+        m_sound.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_sound.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_controls.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_controls.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_game.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_game.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        //Display proper tab
+        videoTab.SetActive(true);
+        soundTab.SetActive(false);
+        controlTab.SetActive(false);
+        gameTab.SetActive(false);
+
+    }
+
+    void openSoundOptions()
+    {
+        //Set color of buttons according to active tab
+        m_video.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_video.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_sound.GetComponent<Image>().color = Color.white;
+        m_sound.gameObject.GetComponentInChildren<Text>().color = new Color(0, 0, 0, 0.666F);
+
+        m_controls.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_controls.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_game.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_game.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        videoTab.SetActive(false);
+        soundTab.SetActive(true);
+        controlTab.SetActive(false);
+        gameTab.SetActive(false);
+    }
+
+    void openControlOptions()
+    {
+        //Set color of buttons according to active tab
+        m_video.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_video.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_sound.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_sound.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_controls.GetComponent<Image>().color = Color.white;
+        m_controls.gameObject.GetComponentInChildren<Text>().color = new Color(0, 0, 0, 0.666F);
+
+        m_game.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_game.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        videoTab.SetActive(false);
+        soundTab.SetActive(false);
+        controlTab.SetActive(true);
+        gameTab.SetActive(false);
+    }
+    
+    void openGameOptions()
+    {
+        //Set color of buttons according to active tab
+        m_video.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_video.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_sound.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_sound.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_controls.GetComponent<Image>().color = new Color(0, 0, 0, 0.666F);
+        m_controls.gameObject.GetComponentInChildren<Text>().color = Color.white;
+
+        m_game.GetComponent<Image>().color = Color.white;
+        m_game.gameObject.GetComponentInChildren<Text>().color = new Color(0, 0, 0, 0.666F);
+
+        videoTab.SetActive(false);
+        soundTab.SetActive(false);
+        controlTab.SetActive(false);
+        gameTab.SetActive(true);
+    }
+
+    void quitGame()
+    {
+        Application.Quit();
+    }
+
+    // Update is called once per frame
+    void Update () {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (canvas.gameObject.activeInHierarchy == false)
+            {
+                canvas.gameObject.SetActive(true);
+
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                canvas.gameObject.SetActive(false);
+
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+    }
+}
